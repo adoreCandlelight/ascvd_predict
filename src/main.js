@@ -5,10 +5,13 @@ import App from './App'
 import router from './router'
 
 // 按需引入element ui
-import { Button, Menu, MenuItem } from 'element-ui';
+import { Button, Menu, MenuItem, Dialog, Radio, RadioGroup } from 'element-ui';
 Vue.use(Button);
 Vue.use(Menu);
 Vue.use(MenuItem);
+Vue.use(Dialog);
+Vue.use(Radio);
+Vue.use(RadioGroup);
 
 
 Vue.config.productionTip = false
