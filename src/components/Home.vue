@@ -3,11 +3,15 @@
         <div>
             <v-header></v-header>
         </div>
+        <div>
+            <v-footer></v-footer>
+        </div>
     </div>
 </template>
 
 <script>
 import Header from './Header'
+import Footer from './Footer'
 
 export default {
     data() {
@@ -16,7 +20,8 @@ export default {
         }
     },
     components: {
-        'v-header': Header
+        'v-header': Header,
+        'v-footer': Footer
     },
     methods: {
 
