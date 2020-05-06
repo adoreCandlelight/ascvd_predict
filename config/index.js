@@ -10,7 +10,17 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      // 开发环境跨域配置 ********
+      '/api': {
+        target: 'http://ascvdpredict.renlab.org',  //源地址
+        changeOrigin: true,  // 允许跨域
+        pathRewrite: {
+          '^/api': '/api'  // 路径重写，不要api则直接匹配空
+        }
+      }
+      // 开发环境跨域配置 ********
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST

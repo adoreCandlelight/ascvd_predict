@@ -5,7 +5,8 @@ import App from './App'
 import router from './router'
 
 // 按需引入element ui
-import { Button, Menu, MenuItem, Dialog, Radio, RadioGroup } from 'element-ui';
+import { Icon, Button, Menu, MenuItem, Dialog, Radio, RadioGroup } from 'element-ui';
+Vue.use(Icon);
 Vue.use(Button);
 Vue.use(Menu);
 Vue.use(MenuItem);
