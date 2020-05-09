@@ -5,10 +5,10 @@
             <el-menu-item id="title">
                 <span class="titleText">ASCVDPredict</span>
             </el-menu-item>
-            <el-menu-item index="1">首页</el-menu-item>
-            <el-menu-item index="2">开始预测</el-menu-item>
-            <el-menu-item index="3">帮助</el-menu-item>
-            <el-menu-item index="4">联系</el-menu-item>
+            <el-menu-item class="detail" index="1">首页</el-menu-item>
+            <el-menu-item class="detail" index="2">开始预测</el-menu-item>
+            <el-menu-item class="detail" index="3">帮助</el-menu-item>
+            <el-menu-item class="detail" index="4">联系</el-menu-item>
         </el-menu>
     </div>
 </template>
@@ -37,5 +37,7 @@ export default {
     font-size: 30px;
     font-weight: bold;
 }
-
+.detail {
+    font-size: 18px;
+}
 </style>

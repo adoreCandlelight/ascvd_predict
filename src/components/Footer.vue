@@ -15,12 +15,12 @@ export default {
 
 <style scoped>
 .footArea {
-    background-color:lightgoldenrodyellow;
+    background-color:#EFEDED;
 }
 .footer {
     text-align: center;
     color: #777777;
     font-size: 18px;
-    padding: 6px 0;
+    padding: 7px 0;
 }
 </style>
