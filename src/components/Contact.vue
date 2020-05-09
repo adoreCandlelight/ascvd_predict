@@ -1,8 +1,10 @@
 <template>
     <div>
+        <v-back-to-top></v-back-to-top>
         <div>
             <v-header></v-header>
         </div>  
+        
         <div class="title">    
             <span class="titleText">
                 <i class="el-icon-s-promotion"></i>&nbsp;Contact
@@ -40,6 +42,7 @@
 <script>
 import Header from './Header'
 import Footer from './Footer'
+import BackTop from './BackToTop'
 export default {
     data() {
         return {
@@ -48,7 +51,8 @@ export default {
     },
     components: {
         'v-header': Header,
-        'v-footer': Footer
+        'v-footer': Footer,
+        'v-back-to-top': BackTop
     },
     methods: {
 
