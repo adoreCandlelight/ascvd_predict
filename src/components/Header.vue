@@ -5,10 +5,18 @@
             <el-menu-item id="title">
                 <span class="titleText">ASCVDPredict</span>
             </el-menu-item>
-            <el-menu-item class="detail" index="1">首页</el-menu-item>
-            <el-menu-item class="detail" index="2">开始预测</el-menu-item>
-            <el-menu-item class="detail" index="3">帮助</el-menu-item>
-            <el-menu-item class="detail" index="4">联系</el-menu-item>
+            <el-menu-item class="detail" index="1">
+                <router-link to="/home">首页</router-link>
+            </el-menu-item>
+            <el-menu-item class="detail" index="2">
+                <router-link to="/server">开始预测</router-link>
+            </el-menu-item>
+            <el-menu-item class="detail" index="3">
+                <router-link to="/help">帮助</router-link>
+            </el-menu-item>
+            <el-menu-item class="detail" index="4">
+                <router-link to="/contact">联系</router-link>
+            </el-menu-item>
         </el-menu>
     </div>
 </template>
@@ -17,14 +25,30 @@
 export default {
     data() {
         return {
-            activeIndex: '1',
+            activeIndex: "1",
         }
     },
     methods: {
         handleSelect(key, keyPath) {
             console.log(key, keyPath)
-        }
+        },
+        selectPath() {
+            var path = this.$route.path;
+            console.log(path);
+            if (path == "/home") {
+                this.activeIndex = "1";
+            } else  if (path == "/server") {
+                this.activeIndex = "2";
+            } else if (path == "/help") {
+                this.activeIndex = "3";
+            } else if (path == "/contact") {
+                this.activeIndex = "4";
+            } 
+        },
     },
+    mounted() {
+        this.selectPath();
+    }
 }
 </script>
 

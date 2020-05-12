@@ -4,6 +4,7 @@ import Router from 'vue-router'
 import Home from '../components/Home'
 import WebServer from '../components/Server'
 import Contact from '../components/Contact'
+import Help from '../components/Help'
 import Test from '../components/Test'
 
 Vue.use(Router)
@@ -24,6 +25,11 @@ export default new Router({
       path: '/contact',
       name: 'contact',
       component: Contact
+    },
+    {
+      path: '/help',
+      name: 'help',
+      component: Help
     },
     {
       path: '/test',
