@@ -13,7 +13,7 @@ module.exports = {
     proxyTable: {
       // 开发环境跨域配置 ********
       '/api': {
-        target: 'http://ascvdpredict.renlab.org',  //源地址
+        target: 'http://ascvd.renlab.org',  //源地址
         changeOrigin: true,  // 允许跨域
         pathRewrite: {
           '^/api': '/api'  // 路径重写，不要api则直接匹配空
