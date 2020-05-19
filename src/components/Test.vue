@@ -14,6 +14,9 @@
                 <el-radio v-model="radio" label=1>备选项</el-radio>
                 <el-radio v-model="radio" label=2>备选项</el-radio>
         </div>
+        <div>
+            <el-button @click="testUid()">testUid</el-button>
+        </div>
         <hr>
         <div>
             年龄：<el-input class="inputTest" placeholder="请输入内容" v-model="input" clearable></el-input>
@@ -40,13 +43,16 @@
 import Header from './Header'
 import Footer from './Footer'
 import BackTop from './BackToTop'
+
+const axios = require('axios');
+import Cookie from '../assets/js/Cookie.js';
 export default {
     data() {
         return {
             baseNum: 0.0,
             stringNum: "12.0",
             input: '',
-
+            uidData: {cname: "ssdadasda"},
             radio: null,
 
         }
@@ -63,6 +69,11 @@ export default {
             var parseNum = Number(this.stringNum);
             console.log(parseNum)
             console.log("radio: " + this.radio)
+        },
+        testUid() {
+            // Cookie.checkCookie();
+            var uid = Cookie.getCookie("cname");
+            console.log("uid:" + uid)
         }
     }
 }

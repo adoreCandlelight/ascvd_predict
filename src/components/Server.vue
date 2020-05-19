@@ -17,14 +17,14 @@
                     </el-radio-group>
                 </div>
                 <div class="dialogFooter">
-                    <el-button id="startButton" type="primary" :disabled="isDisabled" @click="centerDialogVisible = false">开始预测</el-button>
+                    <el-button id="startButton" type="primary" :disabled="isDisabled" @click="agreeDeclaration()">开始预测</el-button>
                 </div>
             </el-dialog>
         </div>
         <div v-if="serverDetail">
             <div class="content">
-                <el-row :gutter="20">
-                    <el-col :span="9">
+                <el-row>
+                    <el-col :span="8">
                         <el-card class="indexCard">
                             <div class="secondTitle">
                                 <i class="el-icon-document"></i>&nbsp;
@@ -82,12 +82,12 @@
                                     <i class="el-icon-refresh"></i>
                                     &nbsp;重置数据
                                 </el-button>
-                                <el-button type="primary" @click="submit()">开始预测</el-button>
+                                <el-button type="primary" @click="submit()" :disabled="submitDisabled">开始预测</el-button>
                             </div>
                             
                         </el-card>
                     </el-col>  
-                    <el-col :span="15">
+                    <el-col :span="16">
                         <el-card class="resultCard">
                             <div class="resultTitle">
                                 <i class="el-icon-picture-outline-round"></i>&nbsp;预测结果
@@ -96,6 +96,40 @@
                             <div class="resultDetail">
                                 <div v-if="loaddingResult" class="loadingResult">
                                     <i class="el-icon-loading"></i>
+                                </div>
+                                <div v-if="seenResult">                             
+                                    <div >
+                                        <el-card class="resultWordsTipsCard">
+                                            <p class="resultWordsTips">{{ resultWordsTips }}</p>
+                                        </el-card>
+                                    </div>
+                                    <div class="picScroll">
+                                        <el-card class="picPosRatioArea">
+                                            <el-row :gutter="15">
+                                                <el-col :span="16">
+                                                    <img :src="resultPicPosRatioUrl" alt="" class="imgPicPosRatio">
+                                                </el-col>
+                                                <el-col :span="8">
+                                                    <div class="imgTipsArea">    
+                                                        <p>{{ resultWordsPosRatio }}</p>
+                                                    </div>
+                                                </el-col>
+                                            </el-row>
+                                        </el-card>
+                                        <el-card class="picPatientAlikeArea">
+                                            <el-row :gutter="15">
+                                                <el-col :span="16">
+                                                    <img :src="resultPicPatientAlikeUrl" alt="" class="imgPicPatientAlike">
+                                                </el-col>
+                                                <el-col :span="8">
+                                                    <div class="imgTipsArea">    
+                                                        <p>{{ resultWordsPatientAlike }}</p>
+                                                    </div>
+                                                </el-col>
+                                            </el-row>
+                                            <br />
+                                        </el-card>
+                                    </div>
                                 </div>
                             </div>
                         </el-card>
@@ -108,19 +142,19 @@
                     任务记录
                     <hr>
                 </div>
-                <div>
+                <div v-if="seenRecords">
                     <!-- 定义了height属性，即可实现固定表头的表格 -->
                     <!-- stripe属性可以创建带斑马纹的表格。它接受一个Boolean，默认为false，设置为true即为启用。 -->
-                    <el-table :data="recordsData" height="200" stripe class="tableArea">
-                        <el-table-column class="tableColumn" label="档案编号">
+                    <el-table :data="recordsData" height="200" stripe class="tableArea" style="text-align: center;">
+                        <el-table-column class="tableColumn" label="档案编号" style="text-align: center;">
                             <template slot-scope="scope">
                                 <span>{{ scope.row.dabh }}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column label="提交时间">
+                        <el-table-column label="提交时间" style="text-align: center;">
                             <template slot-scope="scope">
-                                <i class="el-icon-time"></i>
-                                <span style="margin-left: 10px">{{ scope.row.submitTime }}</span>
+                                <!-- <i class="el-icon-time"></i> -->
+                                <span>{{ millisecondToDate(scope.row.submitTime) }}</span>
                             </template>
                         </el-table-column>
                         <el-table-column label="状态">
@@ -140,7 +174,7 @@
                                     <i class="el-icon-error"></i>
                                 </span>
                                 <span v-if="scope.row.status == 1">
-                                    <el-button @click="getRecordResult(scope.row.jobId)">查看结果</el-button>
+                                    <el-button type="primary" @click="getRecordResult(scope.row.jobId)">查看结果</el-button>
                                 </span>
                             </template>
                         </el-table-column>
@@ -179,13 +213,28 @@ export default {
             smoke: null,
             drink: null,
             DBT: null,
-            recordsData: [],
+            submitDisabled: true,
+            seenRecords: false,
+            recordsData: [
+                // {
+                //     "jobId": 62,
+                //     "submitTime": 1589535036877,
+                //     "status": 1,
+                //     "dabh": "51892"
+                // }
+            ],
             loaddingResult: true,
+            seenResult: false,
+            resultPicPosRatioUrl: "",  // 风险分数图
+            resultPicPatientAlikeUrl: "", 
+            resultWordsTips: "",
+            resultWordsPosRatio: "",
+            resultWordsPatientAlike: "",
         }
     },
     components: {
         'v-header': Header,
-         'v-footer': Footer,
+        'v-footer': Footer,
         'v-back-to-top': BackTop
     },
     methods: {
@@ -196,8 +245,38 @@ export default {
                 this.isDisabled = true;
             }
         },
+        agreeDeclaration() {
+            this.centerDialogVisible = false
+            this.submitDisabled = false
+            this.seenRecords = true
+        },
         submit() {
-            this.testLable();
+            var uid = Cookie.getCookie("cname");
+            var currentDate = new Date();
+            var submitTime = currentDate.getTime();
+            var jobData = {
+                "cname": uid,
+                "submitTime": submitTime,
+                "dabh": this.dabh,
+                "EDU": this.education,
+                "SMOKE": this.smoke,
+                "DRINK1": this.drink,
+                "DBT": this.DBT
+            }    
+            var formJobData = JSON.stringify(jobData);
+            // 重置表单数据
+            this.reset();
+            // console.log(formJobData);
+            let config = {
+                headers: { 'Content-Type': 'application/json; charset=utf-8' }
+            }
+            axios.post("/job/submitJob", formJobData, config).then((res) =>{
+                this.recordsData.unshift(res.data.data)
+                // console.log(res)
+                this.checkRecordHistory();
+            }).catch((err) => {
+                console.log(err)
+            })
         },
         reset() {
             this.dabh = "";
@@ -206,15 +285,83 @@ export default {
             this.drink = null;
             this.DBT = null;
         },
-        testLable() {
-           console.log("edu: " + this.education);
-           console.log("smoke: " + this.smoke);
-           console.log("drink: " + this.drink);
-           console.log("DBT: " + this.DBT);
+        millisecondToDate(millisecond) {
+            let time = new Date(millisecond);
+            // console.log(time)
+            return time.getFullYear() + "-" + time.getMonth() + "-" + time.getDate() + " " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()
+        },
+        getJobIndex(jobId) {
+            for (let i = 0; i < this.recordsData.length; i++) {
+                if (this.recordsData[i].jobId == jobId) {
+                    return i;
+                } 
+            }
+            return -1;
+        },
+        deleteRecord(jobId) {
+            // 先删除本地数组数据，更新视图         
+            var jobIndex = this.getJobIndex(jobId)
+            if (jobIndex != -1) {
+                this.recordsData.splice(jobIndex, 1)
+            }
+            let formData = {"jobId": jobId}
+            let config = {
+                headers: { 'Content-Type': 'application/json; charset=utf-8' }
+            }
+            axios.post("/job/deleteJob", formData, config).then((res) => {
+                // console.log(res)
+            }).catch((err) => {
+                console.log(err)
+            })
+        },
+        checkRecordHistory() {
+            // 如果有未完成的任务则每3s刷新访问一次服务器
+            var hasUnfinished = false
+            var uid = Cookie.getCookie("cname")
+            var cname = {"cname": uid}
+            var formCname = JSON.stringify(cname)
+            let config = {
+                headers: { 'Content-Type': 'application/json; charset=utf-8' }
+            }
+            var checkTimer = setInterval(() => {
+                axios.post("/job/listJobHistory", formCname, config).then((res) => {            
+                    this.recordsData = res.data.data
+                    // 如果不存在未完成任务则停止定时器
+                    for (let i = 0; i < this.recordsData.length; i++) {
+                        if (this.recordsData[i].status == 0) {
+                            hasUnfinished = true
+                        }; 
+                    }  
+                    // console.log(hasUnfinished)
+                    if (hasUnfinished == false) {
+                        clearInterval(checkTimer)
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                })
+            }, 3000);
+        },
+        getRecordResult(jobId) {
+            var formJobId = JSON.stringify({"jobId": jobId});
+            let config = {
+                headers: { 'Content-Type': 'application/json; charset=utf-8' }
+            }
+            axios.post("/job/reportResult", formJobId, config).then((res) => {
+                // console.log(res)
+                this.loaddingResult = false,
+                this.seenResult = true
+                this.resultPicPosRatioUrl = res.data.data.resultPicPosRatio
+                this.resultPicPatientAlikeUrl = res.data.data.resultPicPatientAlike
+                this.resultWordsTips = res.data.data.resultWordsTips
+                this.resultWordsPosRatio = res.data.data.resultWordsPosRatio
+                this.resultWordsPatientAlike = res.data.data.resultWordsPatientAlike
+            }).catch((err) => {
+                console.log(err)
+            })
         }
     },
     mounted() {
-        
+        this.checkRecordHistory()
     }
 }
 </script>
@@ -232,13 +379,10 @@ export default {
 .dialogFooter {
     text-align: center;
 }
-.indexCard {
-    margin: 5%;
-    height: 540px;
-}
-.resultCard {
-    margin: 3%;
-    height: 540px;
+.indexCard, .resultCard {
+    margin: 16px 4% 3%;
+    height: 590px;
+    /* height: 100%; */
 }
 .secondTitle, .resultTitle {
     font-size: 20px;
@@ -248,7 +392,7 @@ export default {
 .indexTitle {
     color:dimgray;
     font-weight: 600;
-    margin-top: 15px;
+    margin-top: 20px;
     margin-bottom: 6px;
 }
 .necessarySymbol {
@@ -262,7 +406,7 @@ export default {
 }
 .btnArea {
     float: right;
-    margin: 10px 10% 35px;
+    margin: 10px 4% 35px;
 }
 .errorIcon {
     color: #f56c6c;
@@ -278,10 +422,38 @@ export default {
     text-align: center;
     font-size: 17px;
 }
-/* .records {
-    margin: 10px 3%;
-} */
-/* .resultTitle {
-    background-color:deepskyblue;
-} */
+.resultWordsTipsCard {
+    margin: 25px 0;
+    background-color:rgba(239, 237, 237, 0.5);
+    border-left-width: 4px;
+    border-left-color:cyan;
+}
+.resultWordsTips {
+    margin: 0;
+}
+.picScroll {
+    overflow-y: auto;   /* 添加滚动条 */
+    overflow-x: auto;
+    height: 390px;
+}
+.imgPicPosRatio {
+    max-width: 70%; /* 等比例缩小 */
+    margin-left: 10%;
+    /* height: 450px; */
+    /* float: left; */
+}
+.imgPicPatientAlike {
+    max-width: 55%; /* 等比例缩小 */
+    margin-left: 12%;
+}
+.picPosRatioArea, .picPatientAlikeArea {
+    margin-bottom: 20px;
+}
+
+.imgTipsArea {
+    background-color:rgba(239, 237, 237, 0.5);
+    padding: 10% 10px;
+    /* margin-top: 55%; */
+    margin: 40% 5% 0 5%;
+}
 </style>
