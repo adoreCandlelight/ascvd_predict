@@ -21,61 +21,197 @@
                 </div>
             </el-dialog>
         </div>
+        <el-card class="noteCard">
+            <strong>温馨提示:</strong>
+            <br>
+            <p class="tipContent">
+                硬化性心血管疾病分为缺血性脑卒中及缺血性心脏病，是中国乃至世界的头号死因。您所在地区高血压高脂血症高发，
+                有更高的硬化性心脑风险。在此为您提供硬化性心脑血管疾病风险评估服务。结果仅供参考，详情请咨询医生。
+            </p>
+        </el-card>                                                                                             
         <div v-if="serverDetail">
             <div class="content">
                 <el-row>
-                    <el-col :span="8">
+                    <el-col :span="10">
                         <el-card class="indexCard">
                             <div class="secondTitle">
                                 <i class="el-icon-document"></i>&nbsp;
                                 数据指标
                                 <hr>
                             </div>
-                            <div class="indexArea">
-                                <div class="indexTitle">
-                                    <span class="necessarySymbol">*&nbsp;</span>
-                                    体检档案编号：
-                                </div>                   
-                                <el-input class="examinationId" v-model="dabh" placeholder="请输入体检档案编号" clearable></el-input>
+
+                            <div v-if="showIntroduction">
+                                <!-- <el-card class="noteCard">
+                                    <strong>温馨提示:</strong>
+                                    <p>
+                                        硬化性心血管疾病分为缺血性脑卒中及缺血性心脏病，是中国乃至世界的头号死因。您所在地区高血压高脂血症高发，
+                                        有更高的硬化性心脑风险。在此为您提供硬化性心脑血管疾病风险评估服务。结果仅供参考，详情请咨询医生。
+                                    </p>
+                                </el-card>      -->
+                                <div>
+                                    <div class="indexTitle">请选择数据输入方式：</div>     
+                                    <el-radio v-model="dataType" :label=0 border @change="changeDataType">体检档案编号</el-radio>
+                                    <el-radio v-model="dataType" :label=1 border @change="changeDataType">体检数据</el-radio>
+                                </div>
                             </div>
-                            <div class="indexArea">
-                                <div class="indexTitle">学历：</div>        
-                                <el-radio-group v-model="education">
-                                    <el-radio class="ratio" :label=1>文盲</el-radio>
-                                    <el-radio class="ratio" :label=2>小学</el-radio>
-                                    <el-radio class="ratio" :label=3>初中</el-radio>
-                                    <el-radio class="ratio" :label=4>高中</el-radio>
-                                    <el-radio class="ratio" :label=5>大专、大学及以上</el-radio>
-                                </el-radio-group>
+                            <div v-if="dabhData">
+                                <div class="indexArea">
+                                    <div class="indexTitle">
+                                        <span class="necessarySymbol">*&nbsp;</span>
+                                        体检档案编号：
+                                    </div>                   
+                                    <el-input class="examinationId" v-model="dabh" placeholder="请输入体检档案编号" clearable></el-input>
+                                </div>
                             </div>
-                            <div class="indexArea">
-                                <div class="indexTitle">是否吸烟：</div>
-                                <el-radio class="ratio" v-model="smoke" label=0>无吸烟或者已戒烟</el-radio>
-                                <el-radio class="ratio" v-model="smoke" label=1>仍在吸烟</el-radio>
-                            </div>
-                            <div class="indexArea">
-                                <div class="indexTitle">日均饮酒量：</div>
-                                <el-tooltip placement="top" effect="dark">
-                                    <div slot="content">
-                                        日均饮酒少于一罐普通啤酒（330 ml）
-                                        <br/>
-                                        或一小杯普通白酒（25 ml）
-                                    </div>
-                                    <el-radio class="ratio" v-model="drink" label=0>无饮酒、饮酒少于10g/天</el-radio>
-                                </el-tooltip>
-                                <el-tooltip placement="top" effect="dark">
-                                    <div slot="content">
-                                        日均饮酒超过一罐普通啤酒（330 ml）
-                                        <br/>
-                                        或一小杯普通白酒（25 ml）
-                                    </div>
-                                    <el-radio class="ratio" v-model="drink" label=1>饮酒超过10g/天</el-radio>
-                                </el-tooltip>
-                            </div>
-                            <div class="indexArea">
-                                <div class="indexTitle">糖尿病史：</div>
-                                <el-radio class="ratio" v-model="DBT" label=0>正常</el-radio>
-                                <el-radio class="ratio" v-model="DBT" label=1>患有糖尿病</el-radio>
+                            <div v-if="customData" class="indexScroll">
+                                <el-row :gutter="5">
+                                    <el-col :span="12">
+                                        <div class="indexArea">
+                                            <span class="inlineTitle">性别：</span>
+                                            <el-radio class="radio" v-model="sex" :label=1>男</el-radio>
+                                            <el-radio class="radio" v-model="sex" :label=0>女</el-radio>
+                                        </div>
+                                         <div class="indexArea">
+                                            <div class="indexTitle">甲状腺 (THYROID)：</div>
+                                            <el-radio class="radio" v-model="THYROID" :label=0>正常</el-radio>
+                                            <el-radio class="radio" v-model="THYROID" :label=1>不正常</el-radio>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">晶体 (CRYSTAL)：</div>
+                                            <el-radio class="radio" v-model="CRYSTAL" :label=0>正常</el-radio>
+                                            <el-radio class="radio" v-model="CRYSTAL" :label=1>不正常</el-radio>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">淋巴 (LYM)：</div>
+                                            <el-radio class="radio" v-model="LYM" :label=0>正常</el-radio>
+                                            <el-radio class="radio" v-model="LYM" :label=1>不正常</el-radio>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">乳腺 (BREAST)：</div>
+                                            <el-radio class="radio" v-model="BREAST" :label=0>正常</el-radio>
+                                            <el-radio class="radio" v-model="BREAST" :label=1>不正常</el-radio>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">收缩压 (SBP)：</div>
+                                            <el-input v-model="SBP" size="small" class="normalInput" placeholder="" clearable>
+                                                <template slot="append">mmHg</template>
+                                            </el-input>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">舒张压 (DBP)：</div>
+                                            <el-input v-model="DBP" size="small" class="normalInput" placeholder="" clearable>
+                                                <template slot="append">mmHg</template>
+                                            </el-input>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">心电图 (ECG)：</div>
+                                            <el-radio class="radio" v-model="ECG" :label=0>正常</el-radio>
+                                            <el-radio class="radio" v-model="ECG" :label=1>不正常</el-radio>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">心界 (BOH)：</div>
+                                            <el-radio class="radio" v-model="BOH" :label=0>正常</el-radio>
+                                            <el-radio class="radio" v-model="BOH" :label=1>不正常</el-radio>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">乙肝E抗体 (HBEAB)：</div>
+                                            <el-radio class="radio" v-model="HBEAB" :label=0>阴性</el-radio>
+                                            <el-radio class="radio" v-model="HBEAB" :label=1>阳性</el-radio>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">乙肝E抗原 (HBEAG)：</div>
+                                            <el-radio class="radio" v-model="HBEAG" :label=0>阴性</el-radio>
+                                            <el-radio class="radio" v-model="HBEAG" :label=1>阳性</el-radio>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">乙肝表面抗体 (HBSAB)：</div>
+                                            <el-radio class="radio" v-model="HBSAB" :label=0>阴性</el-radio>
+                                            <el-radio class="radio" v-model="HBSAB" :label=1>阳性</el-radio>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">乙肝表面抗原 (HBSAG)：</div>
+                                            <el-radio class="radio" v-model="HBSAG" :label=0>阴性</el-radio>
+                                            <el-radio class="radio" v-model="HBSAG" :label=1>阳性</el-radio>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">乙肝核心抗体 (HBCAB)：</div>
+                                            <el-radio class="radio" v-model="HBCAB" :label=0>阴性</el-radio>
+                                            <el-radio class="radio" v-model="HBCAB" :label=1>阳性</el-radio>
+                                        </div>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <div class="indexArea">
+                                            <span class="inlineTitle">年龄：</span>
+                                            <el-input v-model="age" size="small" class="inlineInput" placeholder="" clearable></el-input>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">低密度脂蛋白 (LDL)：</div>
+                                            <el-input v-model="LDL" size="small" class="normalInput" placeholder="" clearable>
+                                                <template slot="append">mmol/L</template>
+                                            </el-input>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">甘油三酯 (TG)：</div>
+                                            <el-input v-model="TG" size="small" class="normalInput" placeholder="" clearable>
+                                                <template slot="append">mmol/L</template>
+                                            </el-input>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">谷丙转氨酶 (GAlanT)：</div>
+                                            <el-input v-model="GAlanT" size="small" class="normalInput" placeholder="" clearable>
+                                                <template slot="append">U/L</template>
+                                            </el-input>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">谷草转氨酶 (GAcetoT)：</div>
+                                            <el-input v-model="GAcetoT" size="small" class="normalInput" placeholder="" clearable>
+                                                <template slot="append">U/L</template>
+                                            </el-input>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">肌酐 (CR)：</div>
+                                            <el-input v-model="CR" size="small" class="normalInput" placeholder="" clearable>
+                                                <template slot="append">μmol/L</template>
+                                            </el-input>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">尿酸 (UA)：</div>
+                                            <el-input v-model="UA" size="small" class="normalInput" placeholder="" clearable>
+                                                <template slot="append">μmol/L</template>
+                                            </el-input>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">心音 (HS):</div>
+                                            <el-input v-model="HS" size="small" class="normalInput" placeholder="" clearable>
+                                                <template slot="append">μmol/L</template>
+                                            </el-input>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">载脂蛋白A (APOA):</div>
+                                            <el-input v-model="APOA" size="small" class="normalInput" placeholder="" clearable>
+                                                <template slot="append">g/L</template>
+                                            </el-input>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">载脂蛋白B (APOB):</div>
+                                            <el-input v-model="APOB" size="small" class="normalInput" placeholder="" clearable>
+                                                <template slot="append">g/L</template>
+                                            </el-input>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">总胆固醇 (TC):</div>
+                                            <el-input v-model="TC" size="small" class="normalInput" placeholder="" clearable>
+                                                <template slot="append">mmol/L</template>
+                                            </el-input>
+                                        </div>
+                                        <div class="indexArea">
+                                            <div class="indexTitle">总胆红素 (TB):</div>
+                                            <el-input v-model="TB" size="small" class="normalInput" placeholder="" clearable>
+                                                <template slot="append">mmol/L</template>
+                                            </el-input>
+                                        </div>
+                                    </el-col>
+                                </el-row>
                             </div>
                             <div class="btnArea">
                                 <el-button type="primary" @click="reset()">
@@ -84,10 +220,10 @@
                                 </el-button>
                                 <el-button type="primary" @click="submit()" :disabled="submitDisabled">开始预测</el-button>
                             </div>
-                            
+                           
                         </el-card>
                     </el-col>  
-                    <el-col :span="16">
+                    <el-col :span="14">
                         <el-card class="resultCard">
                             <div class="resultTitle">
                                 <i class="el-icon-picture-outline-round"></i>&nbsp;预测结果
@@ -98,32 +234,32 @@
                                     <i class="el-icon-loading"></i>
                                 </div>
                                 <div v-if="seenResult">                             
-                                    <div >
-                                        <el-card class="resultWordsTipsCard">
-                                            <p class="resultWordsTips">{{ resultWordsTips }}</p>
-                                        </el-card>
-                                    </div>
                                     <div class="picScroll">
+                                        <el-card class="resultWordsTipsCard">
+                                            <p class="resultWordsTips" v-html="resultWordsTips"></p>
+                                        </el-card>
+                                    <!-- </div>
+                                    <div > -->
                                         <el-card class="picPosRatioArea">
-                                            <el-row :gutter="15">
-                                                <el-col :span="16">
+                                            <el-row :gutter="8">
+                                                <el-col :span="18">
                                                     <img :src="resultPicPosRatioUrl" alt="" class="imgPicPosRatio">
                                                 </el-col>
-                                                <el-col :span="8">
+                                                <el-col :span="6">
                                                     <div class="imgTipsArea">    
-                                                        <p>{{ resultWordsPosRatio }}</p>
+                                                        <p v-html="resultWordsPosRatio"></p>
                                                     </div>
                                                 </el-col>
                                             </el-row>
                                         </el-card>
                                         <el-card class="picPatientAlikeArea">
-                                            <el-row :gutter="15">
-                                                <el-col :span="16">
+                                            <el-row :gutter="8">
+                                                <el-col :span="18">
                                                     <img :src="resultPicPatientAlikeUrl" alt="" class="imgPicPatientAlike">
                                                 </el-col>
-                                                <el-col :span="8">
+                                                <el-col :span="6">
                                                     <div class="imgTipsArea">    
-                                                        <p>{{ resultWordsPatientAlike }}</p>
+                                                        <p v-html="resultWordsPatientAlike"></p>
                                                     </div>
                                                 </el-col>
                                             </el-row>
@@ -208,20 +344,50 @@ export default {
             agreementRadio: 1,
             isDisabled: true,
             serverDetail: true,
+
+            showIntroduction: true,
+            dataType: 0,
+            dabhData: true,
+            customData: false,
+
             dabh: "", // 档案编号
-            education: null,
-            smoke: null,
-            drink: null,
-            DBT: null,
+            sex: null,
+            age: null,
+            LDL: null,
+            TG: null,
+            GAlanT: null,
+            GAcetoT: null,
+            CR: null,
+            THYROID: null,
+            CRYSTAL: null,
+            LYM: null,
+            UA: null,
+            BREAST: null,
+            SBP: null,
+            DBP: null,
+            ECG: null,
+            BOH: null,
+            HR: null,
+            HS: null,
+            HBEAB: null,
+            HBEAG: null,
+            HBSAB: null,
+            HBSAG: null,
+            HBCAB: null,
+            APOA: null,
+            APOB: null,
+            TC: null,
+            TB: null,
+
             submitDisabled: true,
             seenRecords: false,
             recordsData: [
-                // {
-                //     "jobId": 62,
-                //     "submitTime": 1589535036877,
-                //     "status": 1,
-                //     "dabh": "51892"
-                // }
+                {
+                    "jobId": 73,
+                    "submitTime": 1594076462734,
+                    "status": 1,
+                    "dabh": "66799"
+                }
             ],
             loaddingResult: true,
             seenResult: false,
@@ -250,6 +416,17 @@ export default {
             this.submitDisabled = false
             this.seenRecords = true
         },
+        changeDataType(value) {
+            this.customData = !this.customData;
+            this.dabhData = !this.dabhData;
+            if (1 === value) {
+                // this.showIntroduction = false;
+                this.dabh = "";
+            } 
+            // else {
+            //     this.showIntroduction = true;
+            // }
+        },
         submit() {
             var uid = Cookie.getCookie("cname");
             var currentDate = new Date();
@@ -258,11 +435,36 @@ export default {
                 "cname": uid,
                 "submitTime": submitTime,
                 "dabh": this.dabh,
-                "EDU": this.education,
-                "SMOKE": this.smoke,
-                "DRINK1": this.drink,
-                "DBT": this.DBT
+                "dataType": this.dataType,
+                "SEX": this.sex,
+                "AGE2": this.stringToNumber(this.age),
+                "LDL": this.stringToNumber(this.LDL, false),
+                "TG": this.stringToNumber(this.TG, false),
+                "GAlanT": this.stringToNumber(this.GAlanT, false),
+                "GAcetoT": this.stringToNumber(this.GAcetoT, false), 
+                "CR": this.stringToNumber(this.CR, false),
+                "THYROID": this.THYROID,
+                "CRYSTAL": this.CRYSTAL,
+                "LYM": this.LYM,
+                "UA": this.UA,
+                "BREAST": this.BREAST,
+                "SBP": this.stringToNumber(this.SBP),
+                "DBP": this.stringToNumber(this.DBP),
+                "ECG": this.ECG,
+                "BOH": this.BOH,
+                "HR": this.HR,
+                "HS": this.HS,
+                "HBEAB": this.HBEAB,
+                "HBEAG": this.HBEAG,
+                "HBSAB": this.HBSAB,
+                "HBSAG": this.HBSAG,
+                "HBCAB": this.HBCAB,
+                "APOA": this.stringToNumber(this.APOA, false),
+                "APOB": this.stringToNumber(this.APOB, false),
+                "TC": this.stringToNumber(this.TC, false),
+                "TB": this.stringToNumber(this.TB, false)
             }    
+            
             var formJobData = JSON.stringify(jobData);
             // 重置表单数据
             this.reset();
@@ -277,6 +479,19 @@ export default {
             }).catch((err) => {
                 console.log(err)
             })
+        },
+        stringToNumber(str, toInteger = true) {
+            let value = null;
+            if (null == str) {
+                return value;
+            } else {
+                if (toInteger) {
+                    value = parseInt(str);
+                } else {
+                    value = Number(str)
+                }
+            }
+            return value;
         },
         reset() {
             this.dabh = "";
@@ -381,7 +596,7 @@ export default {
 }
 .indexCard, .resultCard {
     margin: 16px 4% 3%;
-    height: 590px;
+    height: 615px;
     /* height: 100%; */
 }
 .secondTitle, .resultTitle {
@@ -395,10 +610,14 @@ export default {
     margin-top: 20px;
     margin-bottom: 6px;
 }
+.inlineTitle {
+    color:dimgray;
+    font-weight: 600;
+}
 .necessarySymbol {
     color: red;
 }
-.ratio {
+.radio {
     margin-top: 6px;
 }
 .indexArea, .records {
@@ -426,7 +645,7 @@ export default {
     margin: 25px 0;
     background-color:rgba(239, 237, 237, 0.5);
     border-left-width: 4px;
-    border-left-color:cyan;
+    border-left-color:deepskyblue;
 }
 .resultWordsTips {
     margin: 0;
@@ -434,17 +653,17 @@ export default {
 .picScroll {
     overflow-y: auto;   /* 添加滚动条 */
     overflow-x: auto;
-    height: 390px;
+    height: 490px;
 }
 .imgPicPosRatio {
-    max-width: 70%; /* 等比例缩小 */
-    margin-left: 10%;
+    max-width: 95%; /* 等比例缩小 */
+    margin-left: 3%;
     /* height: 450px; */
     /* float: left; */
 }
 .imgPicPatientAlike {
-    max-width: 55%; /* 等比例缩小 */
-    margin-left: 12%;
+    max-width: 75%; /* 等比例缩小 */
+    margin-left: 8%;
 }
 .picPosRatioArea, .picPatientAlikeArea {
     margin-bottom: 20px;
@@ -455,5 +674,27 @@ export default {
     padding: 10% 10px;
     /* margin-top: 55%; */
     margin: 40% 5% 0 5%;
+}
+.noteCard {
+    font-family: "Helvetica Neue";
+    background:#FCF8E3;
+    font-size: 16px;
+    color:#8A6D3B;
+    padding: 0;
+    margin: 15px 3% 12px 2%;
+}
+.tipContent {
+    margin: 5px 0 0;
+}
+.indexScroll {
+    overflow-y: auto;   /* 添加滚动条 */
+    overflow-x: auto;
+    height: 375px;
+}
+.inlineInput {
+    width: 60%;
+}
+.normalInput {
+    width: 80%;
 }
 </style>

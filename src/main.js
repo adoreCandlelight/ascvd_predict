@@ -6,7 +6,7 @@ import router from './router'
 
 // 按需引入element ui
 import { Icon, Button, Menu, MenuItem, Dialog, Radio, RadioGroup, Card, Backtop, 
-  Select, Input, Col, Row, Tooltip, Table, TableColumn } from 'element-ui';
+  Select, Input, Col, Row, Tooltip, Table, TableColumn, Carousel, CarouselItem, } from 'element-ui';
 Vue.use(Icon);
 Vue.use(Button);
 Vue.use(Menu);
@@ -23,7 +23,8 @@ Vue.use(Row);
 Vue.use(Tooltip);
 Vue.use(Table);
 Vue.use(TableColumn);
-
+Vue.use(Carousel);
+Vue.use(CarouselItem);
 
 
 Vue.config.productionTip = false

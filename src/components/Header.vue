@@ -1,21 +1,21 @@
 <template>
-    <div>
+    <div id="header">
         <el-menu :default-active="activeIndex" class="navbar" mode="horizontal" @select="handleSelect"
                 background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
             <el-menu-item id="title">
                 <span class="titleText">ASCVDPredict</span>
             </el-menu-item>
             <el-menu-item class="detail" index="1">
-                <router-link to="/home">首页</router-link>
+                <router-link to="/home" class="linkText">首页</router-link>
             </el-menu-item>
             <el-menu-item class="detail" index="2">
-                <router-link to="/server">开始预测</router-link>
+                <router-link to="/server" class="linkText">开始预测</router-link>
             </el-menu-item>
             <el-menu-item class="detail" index="3">
-                <router-link to="/help">帮助</router-link>
+                <router-link to="/help" class="linkText">帮助</router-link>
             </el-menu-item>
             <el-menu-item class="detail" index="4">
-                <router-link to="/contact">联系</router-link>
+                <router-link to="/contact" class="linkText">联系</router-link>
             </el-menu-item>
         </el-menu>
     </div>
@@ -53,6 +53,12 @@ export default {
 </script>
 
 <style scoped>
+#header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 99;
+}
 #title {
     margin-right: 22%;
     margin-left: 10%;
@@ -63,5 +69,8 @@ export default {
 }
 .detail {
     font-size: 18px;
+}
+.linkText {
+    text-decoration: none;
 }
 </style>
