@@ -681,7 +681,7 @@ export default {
     font-size: 16px;
     color:#8A6D3B;
     padding: 0;
-    margin: 15px 3% 12px 2%;
+    margin: 80px 3% 12px 2%;
 }
 .tipContent {
     margin: 5px 0 0;

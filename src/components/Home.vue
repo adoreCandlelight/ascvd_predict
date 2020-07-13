@@ -100,6 +100,9 @@ export default {
         this.handleResize()
         window.addEventListener("resize", this.handleResize);
         // document.body.style.height = "100%";
+    },
+    beforeDestroy() {
+        window.removeEventListener("resize", this.handleResize);
     }
 }
 </script>
